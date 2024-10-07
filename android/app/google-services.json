@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "14636580654",
+    "project_id": "chatter-planet",
+    "storage_bucket": "chatter-planet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14636580654:android:3aea10c9e96e54e327c4bf",
+        "android_client_info": {
+          "package_name": "com.example.chatter_planet_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8BkYPDyG6VcKTRUH3aYRgM3qZzUOwazw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
