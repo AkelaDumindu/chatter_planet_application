@@ -1,4 +1,7 @@
 import 'package:chatter_planet_application/firebase_options.dart';
+import 'package:chatter_planet_application/views/responsive/mobile_layout.dart';
+import 'package:chatter_planet_application/views/responsive/responsive_layout.dart';
+import 'package:chatter_planet_application/views/responsive/web_layout.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(),
+    return const MaterialApp(
+      home: ResponsiveScreenLayout(
+          mobileScreenLayout: MobileScreenLayout(),
+          webScreenLayout: WebScreenLayout()),
     );
   }
 }
