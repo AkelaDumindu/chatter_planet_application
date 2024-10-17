@@ -1,3 +1,5 @@
+import 'package:chatter_planet_application/views/auth_view/login.dart';
+import 'package:chatter_planet_application/views/auth_view/register.dart';
 import 'package:chatter_planet_application/views/responsive/mobile_layout.dart';
 import 'package:chatter_planet_application/views/responsive/responsive_layout.dart';
 import 'package:chatter_planet_application/views/responsive/web_layout.dart';
@@ -8,7 +10,7 @@ class RouterClass {
   final router = GoRouter(
       initialLocation: "/",
       errorPageBuilder: (context, state) {
-        return MaterialPage(
+        return const MaterialPage(
             child: Scaffold(
           body: Center(
             child: Text("This Page is not Found!"),
@@ -20,11 +22,25 @@ class RouterClass {
           path: "/",
           name: "nav_layout",
           builder: (context, state) {
-            return ResponsiveScreenLayout(
+            return const ResponsiveScreenLayout(
               mobileScreenLayout: MobileScreenLayout(),
               webScreenLayout: WebScreenLayout(),
             );
           },
         ),
+        GoRoute(
+          path: "/register",
+          name: "register",
+          builder: (context, state) {
+            return const Register();
+          },
+        ),
+        GoRoute(
+          path: "/login",
+          name: "login",
+          builder: (context, state) {
+            return const Login();
+          },
+        )
       ]);
 }
