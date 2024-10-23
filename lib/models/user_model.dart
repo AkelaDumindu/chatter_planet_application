@@ -38,7 +38,7 @@ class UserModel {
   }
 
   //convert task model to a firebase document
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       "userId": "userId",
       "name": name,

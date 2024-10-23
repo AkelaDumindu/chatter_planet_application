@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:chatter_planet_application/models/user_model.dart';
+import 'package:chatter_planet_application/services/users/user_service.dart';
+import 'package:chatter_planet_application/services/users/user_storage.dart';
 import 'package:chatter_planet_application/utilz/colors.dart';
 import 'package:chatter_planet_application/widget/reusable/custom_button.dart';
 import 'package:chatter_planet_application/widget/reusable/reusable_input.dart';
@@ -35,6 +38,50 @@ class _RegisterState extends State<Register> {
       setState(() {
         _imageFile = File(pickedImage.path);
       });
+    }
+  }
+
+  // signup with email and password
+  Future<void> _registerUser(BuildContext context) async {
+    try {
+      // store image in storage and get download url
+      if (_imageFile != null) {
+        final imageUrl = await UserProfileStorageService().uploadImage(
+            profileImage: _imageFile, userEmail: _emailController.text);
+        _imageUrlController.text = imageUrl;
+      }
+
+      // save user to firestore
+
+      UserService().saveUser(
+        UserModel(
+            userId: "",
+            name: _nameController.text,
+            email: _emailController.text,
+            jobTitle: _jobTitleController.text,
+            imageUrl: _imageUrlController.text,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            password: _passwordController.text,
+            followers: 0),
+      );
+
+      //show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User created successfully'),
+        ),
+      );
+
+      GoRouter.of(context).go('/main-screen');
+    } catch (e) {
+      print('Error signing up with email and password: $e');
+      //show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error signing up with email and password: $e'),
+        ),
+      );
     }
   }
 
@@ -162,7 +209,11 @@ class _RegisterState extends State<Register> {
                       CustomButton(
                         text: "Sign Up",
                         width: MediaQuery.of(context).size.width,
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            await _registerUser(context);
+                          }
+                        },
                       ),
                       const SizedBox(height: 16),
                       TextButton(
