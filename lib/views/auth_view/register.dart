@@ -134,10 +134,10 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 16),
                       ReusableInput(
                         controller: _nameController,
-                        lableText: "Name",
+                        labelText: "Name",
                         icon: Icons.person,
                         obscureText: false,
-                        valiator: (value) {
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please Enter Your Name";
                           }
@@ -147,10 +147,10 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 16),
                       ReusableInput(
                         controller: _emailController,
-                        lableText: "Email",
+                        labelText: "Email",
                         icon: Icons.email,
                         obscureText: false,
-                        valiator: (value) {
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please Enter Your Email";
                           }
@@ -163,10 +163,10 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 16),
                       ReusableInput(
                         controller: _jobTitleController,
-                        lableText: "Job Title",
+                        labelText: "Job Title",
                         icon: Icons.work,
                         obscureText: false,
-                        valiator: (value) {
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please Enter Your Job Title";
                           }
@@ -176,10 +176,10 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 16),
                       ReusableInput(
                         controller: _passwordController,
-                        lableText: "Password",
+                        labelText: "Password",
                         icon: Icons.lock,
                         obscureText: false,
-                        valiator: (value) {
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please Enter Your Password";
                           }
@@ -192,14 +192,15 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 16),
                       ReusableInput(
                         controller: _confirmPasswordController,
-                        lableText: "Confirm Password",
+                        labelText: "Confirm Password",
                         icon: Icons.lock,
                         obscureText: false,
-                        valiator: (value) {
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please Enter Your Confirm Password";
                           }
-                          if (value != _passwordController) {
+
+                          if (value != _passwordController.text) {
                             return 'Passwords do not match';
                           }
                           return null;

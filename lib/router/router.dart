@@ -1,5 +1,6 @@
 import 'package:chatter_planet_application/views/auth_view/login.dart';
 import 'package:chatter_planet_application/views/auth_view/register.dart';
+import 'package:chatter_planet_application/views/main_screen.dart';
 import 'package:chatter_planet_application/views/responsive/mobile_layout.dart';
 import 'package:chatter_planet_application/views/responsive/responsive_layout.dart';
 import 'package:chatter_planet_application/views/responsive/web_layout.dart';
@@ -22,9 +23,9 @@ class RouterClass {
           path: "/",
           name: "nav_layout",
           builder: (context, state) {
-            return const ResponsiveScreenLayout(
-              mobileScreenLayout: MobileScreenLayout(),
-              webScreenLayout: WebScreenLayout(),
+            return ResponsiveScreenLayout(
+              mobileScreenLayout: Login(),
+              webScreenLayout: const WebScreenLayout(),
             );
           },
         ),
@@ -39,7 +40,14 @@ class RouterClass {
           path: "/login",
           name: "login",
           builder: (context, state) {
-            return const Login();
+            return Login();
+          },
+        ),
+        GoRoute(
+          path: "/main-screen",
+          name: "main-screen",
+          builder: (context, state) {
+            return MainScreen();
           },
         )
       ]);

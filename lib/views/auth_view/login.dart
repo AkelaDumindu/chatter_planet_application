@@ -1,3 +1,4 @@
+import 'package:chatter_planet_application/services/auth/auth_service.dart';
 import 'package:chatter_planet_application/utilz/colors.dart';
 import 'package:chatter_planet_application/widget/reusable/custom_button.dart';
 import 'package:chatter_planet_application/widget/reusable/reusable_input.dart';
@@ -5,15 +6,52 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class Login extends StatelessWidget {
-  const Login({super.key});
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  //sign in with email and password
+
+  Future<void> _signInWithEmailAndPassword(BuildContext context) async {
+    try {
+      await AuthServices().signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      GoRouter.of(context).go('/register');
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      // Sign in with Google
+      await AuthServices().signInWithGoogle();
+
+      GoRouter.of(context).go('/main-screen');
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('Error signing in with Google: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -36,10 +74,10 @@ class Login extends StatelessWidget {
                   children: [
                     ReusableInput(
                       controller: _emailController,
-                      lableText: "Email",
+                      labelText: "Email",
                       icon: Icons.email,
                       obscureText: false,
-                      valiator: (value) {
+                      validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please Enter Your Email";
                         }
@@ -52,10 +90,10 @@ class Login extends StatelessWidget {
                     const SizedBox(height: 16),
                     ReusableInput(
                       controller: _passwordController,
-                      lableText: "Password",
+                      labelText: "Password",
                       icon: Icons.lock,
                       obscureText: false,
-                      valiator: (value) {
+                      validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please Enter Your Password";
                         }
@@ -72,7 +110,11 @@ class Login extends StatelessWidget {
                       text: "Log In",
                       width: MediaQuery.of(context).size.width,
                       //todo:login method
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          await _signInWithEmailAndPassword(context);
+                        }
+                      },
                     ),
                     const SizedBox(
                       height: 24,
@@ -91,7 +133,7 @@ class Login extends StatelessWidget {
                       text: "Sign In with Google",
                       width: MediaQuery.of(context).size.width,
                       //todo:google login
-                      onPressed: () {},
+                      onPressed: () => _signInWithGoogle(context),
                     ),
                     const SizedBox(height: 16),
                     TextButton(

@@ -3,32 +3,36 @@ import 'package:flutter/material.dart';
 
 class ReusableInput extends StatelessWidget {
   final TextEditingController controller;
-  final String lableText;
+  final String labelText;
   final IconData icon;
   final bool obscureText;
-  final String? Function(String?)? valiator;
-  const ReusableInput(
-      {super.key,
-      required this.controller,
-      required this.lableText,
-      required this.icon,
-      required this.obscureText,
-      this.valiator});
+  final String? Function(String?) validator;
+
+  const ReusableInput({
+    super.key,
+    required this.controller,
+    required this.labelText,
+    required this.icon,
+    required this.obscureText,
+    required this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final borderStyle = OutlineInputBorder(
+    final inputBorder = OutlineInputBorder(
       borderSide: Divider.createBorderSide(context),
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(8),
     );
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        border: borderStyle,
-        focusedBorder: borderStyle,
-        enabledBorder: borderStyle,
-        labelText: lableText,
-        labelStyle: TextStyle(color: mainWhiteColor),
+        border: inputBorder,
+        focusedBorder: inputBorder,
+        enabledBorder: inputBorder,
+        labelText: labelText,
+        labelStyle: const TextStyle(
+          color: mainWhiteColor,
+        ),
         filled: true,
         prefixIcon: Icon(
           icon,
@@ -37,7 +41,7 @@ class ReusableInput extends StatelessWidget {
         ),
       ),
       obscureText: obscureText,
-      validator: valiator,
+      validator: validator,
     );
   }
 }

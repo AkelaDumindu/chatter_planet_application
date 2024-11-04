@@ -1,8 +1,12 @@
 import 'package:chatter_planet_application/exception/auth_exception.dart';
+import 'package:chatter_planet_application/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 // regiter user with email and password
   Future<UserCredential> createUserWithEmailAndPassword({
@@ -39,6 +43,57 @@ class AuthServices {
       throw Exception(mapFirebaseAuthExceptionCode(e.code));
     } catch (e) {
       print('Error signing in: $e');
+    }
+  }
+
+  //sign in with google
+  Future<void> signInWithGoogle() async {
+    try {
+      // Trigger the Google Sign In process
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return;
+      }
+
+      // Obtain the GoogleSignInAuthentication object
+      final googleAuth = await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google Auth credential
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      if (user != null) {
+        // Prepare user data
+        UserModel newUser = UserModel(
+            userId: user.uid,
+            name: user.displayName ?? "No name",
+            email: user.email ?? "No Email",
+            jobTitle: "Job Title",
+            imageUrl: user.photoURL ?? "",
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            password: "",
+            followers: 0);
+
+        // Save user to Firestore
+        final userDocRef =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        await userDocRef.set(newUser.toMap());
+        print("User Data saved under google login");
+      }
+    } on FirebaseAuthException catch (e) {
+      print(
+          'Error signing in with Google: ${mapFirebaseAuthExceptionCode(e.code)}');
+      throw Exception(mapFirebaseAuthExceptionCode(e.code));
+    } catch (e) {
+      print('Error signing in with Google: $e');
     }
   }
 
