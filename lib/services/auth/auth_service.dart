@@ -47,6 +47,7 @@ class AuthServices {
   }
 
   //sign in with google
+  //This methode will sign in the user with google
   Future<void> signInWithGoogle() async {
     try {
       // Trigger the Google Sign In process
@@ -71,22 +72,22 @@ class AuthServices {
 
       if (user != null) {
         // Prepare user data
-        UserModel newUser = UserModel(
-            userId: user.uid,
-            name: user.displayName ?? "No name",
-            email: user.email ?? "No Email",
-            jobTitle: "Job Title",
-            imageUrl: user.photoURL ?? "",
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-            password: "",
-            followers: 0);
+        final userData = {
+          'userId': user.uid,
+          'name': user.displayName ?? 'No Name',
+          'email': user.email ?? 'No Email',
+          'jobTitle': 'jobTitle',
+          'imageUrl': user.photoURL ?? '',
+          'createdAt': Timestamp.fromDate(DateTime.now()),
+          'updatedAt': Timestamp.fromDate(DateTime.now()),
+          'password': '', // Password is not needed for Google sign-in
+          'followers': 0,
+        };
 
         // Save user to Firestore
         final userDocRef =
             FirebaseFirestore.instance.collection('users').doc(user.uid);
-        await userDocRef.set(newUser.toMap());
-        print("User Data saved under google login");
+        await userDocRef.set(userData);
       }
     } on FirebaseAuthException catch (e) {
       print(
@@ -96,7 +97,6 @@ class AuthServices {
       print('Error signing in with Google: $e');
     }
   }
-
   // Sign out
 
   Future<void> signOut() async {
