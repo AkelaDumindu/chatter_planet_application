@@ -44,4 +44,15 @@ class FeedService {
       print('Error saving post: $error');
     }
   }
+
+  // Fetch the posts as a stream
+  //This methode will return a stream of list of posts , a stream is a sequence of asynchronous events ordered in time and the stream will return a list of posts.
+
+  Stream<List<Post>> getPostsStream() {
+    return _feedCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Post.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 }
