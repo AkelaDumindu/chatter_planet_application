@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:chatter_planet_application/services/feeds/feed_service.dart';
+import 'package:chatter_planet_application/services/users/user_service.dart';
 import 'package:chatter_planet_application/utilz/functions/mood.dart';
 import 'package:chatter_planet_application/widget/reusable/custom_button.dart';
 import 'package:chatter_planet_application/widget/reusable/reusable_input.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateScreen extends StatefulWidget {
@@ -30,6 +34,69 @@ class _CreateScreenState extends State<CreateScreen> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
+    }
+  }
+
+  // handle form submission
+
+  void _submitPost() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      //form is valid, handle the submission
+      try {
+        setState(() {
+          _isUploading = true; //when uploding post show the button name
+        });
+
+        if (kIsWeb) {
+          return;
+        }
+
+        final postCaption = _captionController.text;
+
+        // get the current user
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user != null) {
+          //fetch user details from firestore
+          final userDetails = await UserService().getUserById(user.uid);
+
+          if (userDetails != null) {
+            //create a new post details with user details
+            final postDetails = {
+              'postCaption': postCaption,
+              'mood': _selectedMood.name,
+              'userId': user.uid,
+              'username': userDetails.name,
+              'profImage': userDetails.imageUrl,
+              'postImage': _imageFile,
+            };
+
+            //save the post
+            await FeedService().savePost(postDetails);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Post created successfully!')),
+            );
+
+            // Clear the form
+            _captionController.clear();
+
+            //navigate to home screen
+            GoRouter.of(context).go('/main-screen');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No user is currently logged in')),
+            );
+          }
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to create post')));
+      } finally {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
@@ -107,9 +174,9 @@ class _CreateScreenState extends State<CreateScreen> {
                 const SizedBox(height: 16),
                 CustomButton(
                   // text: kIsWeb ? "Not Supported Yet":"Create Post", //when dont allow create post for web
-                  text: "Create Post",
+                  text: _isUploading ? "uploading..." : "Create Post",
                   width: MediaQuery.of(context).size.width,
-                  onPressed: () {},
+                  onPressed: _submitPost,
                 )
               ],
             ),
