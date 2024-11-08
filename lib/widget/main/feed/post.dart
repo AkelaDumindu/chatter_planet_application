@@ -1,4 +1,5 @@
 import 'package:chatter_planet_application/models/post_model.dart';
+import 'package:chatter_planet_application/services/feeds/feed_service.dart';
 import 'package:chatter_planet_application/utilz/colors.dart';
 import 'package:chatter_planet_application/utilz/functions/mood.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,57 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
+  bool _isLiked = false; // Track if the post is liked
+
+  // check if user liked the post
+  Future<void> _checkIfLiked() async {
+    final hasLiked = await FeedService().hasUserLikedPost(
+        postId: widget.post.postId, userId: widget.currentUserId);
+
+    setState(() {
+      _isLiked = hasLiked;
+    });
+  }
+
+  //method to like and dislike post
+
+  void _likePost() async {
+    try {
+      if (_isLiked) {
+        await FeedService().disLikePost(
+            postId: widget.post.postId, userId: widget.currentUserId);
+        setState(() {
+          _isLiked = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Post unliked'),
+          ),
+        );
+      } else {
+        await FeedService().likePost(
+          postId: widget.post.postId,
+          userId: widget.currentUserId,
+        );
+        setState(() {
+          _isLiked = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Post liked'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error liking/unliking post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to like/unlike post'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Format the date
@@ -131,9 +183,10 @@ class _PostWidgetState extends State<PostWidget> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.favorite_border,
+                    onPressed: _likePost,
+                    icon: Icon(
+                      _isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: _isLiked ? Colors.red : mainWhiteColor,
                     ),
                   ),
                   Text(

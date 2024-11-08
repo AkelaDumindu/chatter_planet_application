@@ -1,19 +1,35 @@
 import 'package:chatter_planet_application/models/post_model.dart';
-import 'package:chatter_planet_application/services/auth/auth_service.dart';
 import 'package:chatter_planet_application/services/feeds/feed_service.dart';
 import 'package:chatter_planet_application/utilz/colors.dart';
 import 'package:chatter_planet_application/widget/main/feed/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class FeedScreen extends StatefulWidget {
+class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
 
-  @override
-  State<FeedScreen> createState() => _FeedScreenState();
-}
+  Future<void> _deletePost(
+      String postId, String postUrl, BuildContext context) async {
+    try {
+      await FeedService().deletePost(
+        postId: postId,
+        postUrl: postUrl,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Post deleted successfully'),
+        ),
+      );
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error deleting post'),
+        ),
+      );
+    }
+  }
 
-class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
