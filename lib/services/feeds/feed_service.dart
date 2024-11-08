@@ -121,4 +121,18 @@ class FeedService {
       return false;
     }
   }
+
+  // delete a post firebase databse
+  Future<void> deletePost(
+      {required String postId, required String postUrl}) async {
+    try {
+      // delete post
+      await _feedCollection.doc(postId).delete();
+//call deleteImage function for delete image
+      await FeedStorageService().deleteImage(imageUrl: postUrl);
+      print("Post deleted successfully");
+    } catch (e) {
+      print('Error deleting post: $e');
+    }
+  }
 }
