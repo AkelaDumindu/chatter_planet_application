@@ -1,15 +1,26 @@
+import 'package:chatter_planet_application/widget/main/reels/add_reel.dart';
 import 'package:flutter/material.dart';
 
-class ReelsScreen extends StatefulWidget {
+class ReelsScreen extends StatelessWidget {
   const ReelsScreen({super.key});
 
   @override
-  State<ReelsScreen> createState() => _ReelsScreenState();
-}
-
-class _ReelsScreenState extends State<ReelsScreen> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    void _showAddReelModal(BuildContext context) {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => AddReelModel(),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reels'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddReelModal(context),
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }
