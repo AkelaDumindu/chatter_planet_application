@@ -1,6 +1,8 @@
+import 'package:chatter_planet_application/models/user_model.dart';
 import 'package:chatter_planet_application/views/auth_view/login.dart';
 import 'package:chatter_planet_application/views/auth_view/register.dart';
 import 'package:chatter_planet_application/views/main_screen.dart';
+import 'package:chatter_planet_application/views/main_screens/single_user.dart';
 import 'package:chatter_planet_application/views/responsive/mobile_layout.dart';
 import 'package:chatter_planet_application/views/responsive/responsive_layout.dart';
 import 'package:chatter_planet_application/views/responsive/web_layout.dart';
@@ -49,6 +51,16 @@ class RouterClass {
           builder: (context, state) {
             return MainScreen();
           },
-        )
+        ),
+        GoRoute(
+          name: "profile-screen",
+          path: "/profile-screen",
+          builder: (context, state) {
+            final UserModel user = state.extra as UserModel;
+            return SingleUser(
+              user: user,
+            );
+          },
+        ),
       ]);
 }

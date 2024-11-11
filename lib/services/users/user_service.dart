@@ -50,4 +50,17 @@ class UserService {
     }
     return null;
   }
+
+  //get all users
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final snapshot = await _usersCollection.get();
+      return snapshot.docs
+          .map((doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      print('Error getting users: $error');
+      return [];
+    }
+  }
 }
