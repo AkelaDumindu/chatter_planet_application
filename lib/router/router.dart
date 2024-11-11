@@ -3,7 +3,6 @@ import 'package:chatter_planet_application/views/auth_view/login.dart';
 import 'package:chatter_planet_application/views/auth_view/register.dart';
 import 'package:chatter_planet_application/views/main_screen.dart';
 import 'package:chatter_planet_application/views/main_screens/single_user.dart';
-import 'package:chatter_planet_application/views/responsive/mobile_layout.dart';
 import 'package:chatter_planet_application/views/responsive/responsive_layout.dart';
 import 'package:chatter_planet_application/views/responsive/web_layout.dart';
 import 'package:flutter/material.dart';
