@@ -1,4 +1,5 @@
 import 'package:chatter_planet_application/models/reels_model.dart';
+import 'package:chatter_planet_application/services/reels/reel_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReelService {
@@ -20,6 +21,22 @@ class ReelService {
 
       final docRef = await _reelsCollection.add(reel.toJson());
       await docRef.update({'reelId': docRef.id});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Fetch reels from Firestore
+  Stream<QuerySnapshot> getReels() {
+    return _reelsCollection.snapshots();
+  }
+
+  // Delete a reel from Firestore
+  Future<void> deleteReel(Reel reel) async {
+    try {
+      await _reelsCollection.doc(reel.reelId).delete();
+      // Delete the reel from Firebase Storage
+      await ReelStorageService().deleteVideo(videoUrl: reel.videoUrl);
     } catch (e) {
       print(e);
     }
