@@ -1,3 +1,6 @@
+import 'package:chatter_planet_application/utilz/functions/mood.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Post {
   final String postCaption;
   final Mood mood;
@@ -19,4 +22,34 @@ class Post {
       required this.datePublished,
       required this.postUrl,
       required this.profImage});
+
+       // Convert a Post instance to a map (for saving to Firestore)
+  Map<String, dynamic> toJson() {
+    return {
+      'postCaption': postCaption,
+      'mood': mood.name, // Use enum name
+      'userId': userId,
+      'username': username,
+      'likes': likes,
+      'postId': postId,
+      'datePublished': Timestamp.fromDate(datePublished),
+      'postUrl': postUrl,
+      'profImage': profImage,
+    };
+  }
+
+  // Create a Post instance from a map (for retrieving from Firestore)
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      postCaption: json['postCaption'] ?? '',
+      mood: MoodExtension.fromString(json['mood'] ?? 'happy'),
+      userId: json['userId'] ?? '',
+      username: json['username'] ?? '',
+      likes: json['likes'] ?? 0,
+      postId: json['postId'] ?? '',
+      datePublished: (json['datePublished'] as Timestamp).toDate(),
+      postUrl: json['postUrl'] ?? '',
+      profImage: json['profImage'] ?? '',
+    );
+  }
 }
