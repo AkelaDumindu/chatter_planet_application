@@ -1,6 +1,10 @@
 import 'dart:io';
-
+import 'package:chatter_planet_application/models/user_model.dart';
+import 'package:chatter_planet_application/services/reels/reel_service.dart';
+import 'package:chatter_planet_application/services/reels/reel_storage.dart';
+import 'package:chatter_planet_application/services/users/user_service.dart';
 import 'package:chatter_planet_application/widget/reusable/custom_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +28,54 @@ class _AddReelModelState extends State<AddReelModel> {
       setState(() {
         _videoFile = File(pickedFile.path);
       });
+    }
+  }
+
+  void _submitReel() async {
+    if (_videoFile != null && _captionController.text.isNotEmpty) {
+      try {
+        //loading
+        setState(() {
+          _isUploading = true;
+        });
+
+        if (kIsWeb) {
+          return;
+        }
+
+        // Upload video to Firebase Storage
+        final videoUrl = await ReelStorageService().uploadVideo(
+          videoFile: _videoFile!,
+          userId: FirebaseAuth.instance.currentUser!.uid,
+        );
+
+        // get user date
+        final UserModel? userData = await UserService()
+            .getUserById(FirebaseAuth.instance.currentUser!.uid);
+        final reelDetails = {
+          'caption': _captionController.text,
+          'videoUrl': videoUrl,
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'userName': userData?.name,
+          'profileImage': userData?.imageUrl
+        };
+
+        await ReelService().saveReel(reelDetails);
+
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Reel added successfully!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to add reel')),
+        );
+      } finally {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
@@ -69,7 +121,7 @@ class _AddReelModelState extends State<AddReelModel> {
                         ? 'Uploading...'
                         : 'Upload Reel',
                 width: MediaQuery.of(context).size.width,
-                onPressed: () {},
+                onPressed: _submitReel,
               )
             ],
           ),
