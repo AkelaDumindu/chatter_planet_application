@@ -135,4 +135,35 @@ class FeedService {
       print('Error deleting post: $e');
     }
   }
+
+  //gets all posts of relavent user
+
+  Future<List<String>> getUserPosts(String userId) async {
+    try {
+      final userPosts = await _feedCollection
+          .where('userId', isEqualTo: userId)
+          .get()
+          .then((snapshot) {
+        return snapshot.docs.map((doc) {
+          return Post.fromJson(doc.data() as Map<String, dynamic>);
+        }).toList();
+      });
+      return userPosts.map((post) => post.postUrl).toList();
+    } catch (e) {
+      print('Error fetching user posts: $e');
+      return [];
+    }
+  }
+
+  // Get the count of posts for a user
+  Future<int> getUserPostsCount(String userId) async {
+    try {
+      final snapshot =
+          await _feedCollection.where('userId', isEqualTo: userId).get();
+      return snapshot.size;
+    } catch (error) {
+      print('Error getting user posts count: $error');
+      return 0;
+    }
+  }
 }
